@@ -8,57 +8,76 @@ class GameOfNim(Game):
 
     def __init__(self, board=[3,1]):
         moves = []
-        for i, count in enumerate(board):
-            for num in range(1, count + 1):
-                moves.append((i, num))
+        for row in range(len(board)):
+            for count in range(1, board[row]+1):
+                moves.append((row, count))
         self.initial = GameState(to_move='MAX', utility=0, board=board, moves=moves)
-        # raise NotImplementedError
+        
+    
 
     def actions(self, state):
         """Legal moves are at least one object, all from the same row."""
         return state.moves
+    
 
     def result(self, state, move):
-        board = list(state.board)
+        """Return the resulting state after making a move."""
+        if move not in state.moves:
+            return state
+        
+        board = state.board[:] # copy of board
         row, count = move
         board[row] -= count
-        next_player = 'MIN' if state.to_move == 'MAX' else 'MAX'
+
         moves = []
-        for i, objects in enumerate(board):
-            for num in range(1, objects + 1):
-                moves.append((i, num))
-        return GameState(to_move=next_player, utility=self.utility(state, state.to_move), board=board, moves=moves)
-        # raise NotImplementedError
+        for r in range(len(board)):
+            for c in range(1, board[r]+1):
+                moves.append((r, c))
+
+        next_player = 'MIN' if state.to_move == 'MAX' else 'MAX'
+        return GameState(to_move=next_player, utility=0, board=board, moves=moves)
+    
 
     def utility(self, state, player):
-        """Return the value to player; 1 for win, -1 for loss, 0 otherwise."""
+        """Return +1 if 'player' won, -1 if 'player' lost, 0 otherwise."""
         if self.terminal_test(state):
-            if state.to_move != player:
-                return 1  # player has won
+            # Determine who made the last move
+            if state.to_move == 'MIN':
+                last_player = 'MIN'
             else:
-                return -1  # player has lost
-        # # raise NotImplementedError
-        return 0
-        # if self.terminal_test(state):
-        #     return 1 if state.to_move != player else -1
-        # return 0
+                last_player = 'MAX'
+
+            if player == last_player:
+                return 1   # player made the last move won
+            else:
+                return -1  # player didn’t make last move lost
+        else:
+            return 0
+
+
+    
 
     def terminal_test(self, state):
         """A state is terminal if there are no objects left"""
-        return all(count == 0 for count in state.board)
-        # raise NotImplementedError
+        return all(x == 0 for x in state.board)
+    
 
     def display(self, state):
-        print("board: ", state.board)
+        board = state.board
+        print("board: ", board)
+
 
 
 if __name__ == "__main__":
     nim = GameOfNim(board=[0, 5, 3, 1]) # Creating the game instance
-    nim = GameOfNim(board=[7, 5, 3, 1]) # a much larger tree to search
+
+    #nim = GameOfNim(board=[7, 5, 3, 1]) # a much larger tree to search
+
     print(nim.initial.board) # must be [0, 5, 3, 1]
-    print(nim.initial.moves) # must be [(1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (2, 1), (2, 2), (2, 3), (3, 1)]
+    print(nim.initial.moves) # must be [(1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (2,1), (2, 2), (2, 3), (3, 1)]
     print(nim.result(nim.initial, (1,3) ))
-    utility = nim.play_game(alpha_beta_player, query_player) # computer moves first 
+    utility = nim.play_game(alpha_beta_player, query_player) # computer moves first
+
     if (utility < 0):
         print("MIN won the game")
     else:

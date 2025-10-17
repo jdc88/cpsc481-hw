@@ -53,7 +53,7 @@ class GameOfNim(Game):
 
 
 if __name__ == "__main__":
-    # nim = GameOfNim(board=[0, 5, 3, 1]) # Creating the game instance
+    nim = GameOfNim(board=[0, 5, 3, 1]) # Creating the game instance
     nim = GameOfNim(board=[7, 5, 3, 1]) # a much larger tree to search
     print(nim.initial.board) # must be [0, 5, 3, 1]
     print(nim.initial.moves) # must be [(1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (2, 1), (2, 2), (2, 3), (3, 1)]

@@ -45,7 +45,7 @@ class GameOfNim(Game):
             if state.to_move == 'MIN':
                 last_player = 'MIN'
             else:
-                last_player = 'MIN'
+                last_player = 'MAX'
 
             if player == last_player:
                 return 1   # player made the last move won
